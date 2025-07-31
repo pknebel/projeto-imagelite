@@ -1,9 +1,27 @@
 package com.github.pknebel.imageliteapi.domain.enums;
 
+import java.util.Arrays;
+
+import org.springframework.http.MediaType;
+
 public enum ImageExtensionEnum {
-    PNG,
-    JPG,
-    GIF,
-    JPEG,
+    PNG(MediaType.IMAGE_PNG),
+    GIF(MediaType.IMAGE_GIF),
+    JPEG(MediaType.IMAGE_JPEG);
+
+    private MediaType mediaType;
+
+    ImageExtensionEnum(MediaType mediaType){
+        this.mediaType = mediaType;
+
+    }
+
+    public static ImageExtensionEnum valueOf(MediaType mediaType){
+        return Arrays.stream(values())
+                .filter(ie -> ie.mediaType.equals(mediaType))
+                .findFirst()
+                .orElse(null);
+        
+    }
 
 }
