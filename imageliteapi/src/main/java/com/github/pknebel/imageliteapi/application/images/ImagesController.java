@@ -2,6 +2,9 @@ package com.github.pknebel.imageliteapi.application.images;
 
 import java.io.IOException;
 import java.net.URI;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -16,6 +19,8 @@ import com.github.pknebel.imageliteapi.domain.entities.ImageEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 
@@ -43,6 +48,23 @@ public class ImagesController {
 
         return ResponseEntity.created(imageURI).build();
 
+    }
+    @GetMapping("{id}")
+    public ResponseEntity<byte[]> getImage(@PathVariable("id") String id){
+        var possibleImage = imageService.findById(id);
+
+        if (possibleImage.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+
+        var image = possibleImage.get();
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.setContentType(image.getExtension().getMediaType());
+        headers.setContentLength(image.getSize());
+        headers.setContentDispositionFormData("inline; filename=\"" + image.getFileName() + "\"", image.getFileName());
+
+        return new ResponseEntity<>(image.getFile(), headers, HttpStatus.OK);
     }
 
     private URI buildImageURL(ImageEntity image){
