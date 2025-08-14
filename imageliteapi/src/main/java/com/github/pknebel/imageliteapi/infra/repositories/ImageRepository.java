@@ -10,6 +10,12 @@ import org.springframework.util.StringUtils;
 import com.github.pknebel.imageliteapi.domain.entities.ImageEntity;
 import com.github.pknebel.imageliteapi.domain.enums.ImageExtensionEnum;
 
+import static com.github.pknebel.imageliteapi.infra.repositories.specs.ImageSpecs.extensionEqual;
+import static com.github.pknebel.imageliteapi.infra.repositories.specs.ImageSpecs.nameLike;
+import static com.github.pknebel.imageliteapi.infra.repositories.specs.ImageSpecs.tagsLike;
+
+import static com.github.pknebel.imageliteapi.infra.repositories.specs.GenericSpecs.conjunction;;
+
 /*
  * SELECT * FROM IMAGE WHERE 1 = 1 AND EXTENSION = extension AND (NAME LIKE query OR TAGS LIKE query)
  */
@@ -17,25 +23,17 @@ import com.github.pknebel.imageliteapi.domain.enums.ImageExtensionEnum;
 public interface ImageRepository extends JpaRepository<ImageEntity, String>, JpaSpecificationExecutor<ImageEntity> {
 
     default List<ImageEntity> findByExtensionAndNameOrTagsLike(ImageExtensionEnum extension, String query){
-
-        Specification<ImageEntity> conjunction = (root, q, criteriaBuilder) -> criteriaBuilder.conjunction();
+        Specification<ImageEntity> conjunction = conjunction();
         Specification<ImageEntity> spec = Specification.where(conjunction);
 
         if(extension != null){
-            //AND EXTENSION = extension
-            Specification<ImageEntity> extensionEqual = (root, q, cb) -> cb.equal(root.get("extension"), extension);
-            spec = spec.and(extensionEqual);
+            spec = spec.and(extensionEqual(extension));
         }
 
         if(StringUtils.hasText(query)){
             //AND (NAME LIKE query OR TAGS LIKE query)
-            Specification<ImageEntity> nameLike = (root, q, cb) -> cb.like(cb.upper(root.get("name")), "%" + query.toUpperCase() + "%");
-            Specification<ImageEntity> tagsLike = (root, q, cb) -> cb.like(cb.upper(root.get("tags")), "%" + query.toUpperCase() + "%");
-            Specification<ImageEntity> nameOrTagsLike = Specification.anyOf(nameLike, tagsLike);
-
-            spec = spec.and(nameOrTagsLike);
+            spec = spec.and(Specification.anyOf(nameLike(query), tagsLike(query)));
         }
         return findAll(spec);
     }
-
 }
