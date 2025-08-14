@@ -30,9 +30,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 @RequiredArgsConstructor
 public class ImagesController {
 
-    private final ImageService imageService;
+    private ImageService imageService;
 
-    private final ImagesMapper imagesMapper;
+    private ImagesMapper imagesMapper;
 
     @PostMapping
     public ResponseEntity save(

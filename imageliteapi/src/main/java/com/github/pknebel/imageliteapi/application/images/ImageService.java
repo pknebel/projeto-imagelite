@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ImageService implements ImageUseCase{
 
-    private final ImageRepository imageRepository;
+    private ImageRepository imageRepository;
 
     @Override
     @Transactional
