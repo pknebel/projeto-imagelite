@@ -2,6 +2,7 @@ package com.github.pknebel.imageliteapi.application.images;
 
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.github.pknebel.imageliteapi.domain.entities.ImageEntity;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ImageService implements ImageUseCase{
 
+    @Autowired
     private ImageRepository imageRepository;
 
     @Override

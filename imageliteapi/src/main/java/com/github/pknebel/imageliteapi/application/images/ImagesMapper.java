@@ -24,4 +24,14 @@ public class ImagesMapper {
 
     }
 
+    public ImageDTO imageToDto(ImageEntity image, String url){
+        return ImageDTO.builder()
+                    .url(url)
+                    .extension(image.getExtension().name())
+                    .name(image.getName())
+                    .size(image.getSize())
+                    .uploadedDate(image.getUploadedAt().toLocalDate())
+                    .build();
+    }
+
 }

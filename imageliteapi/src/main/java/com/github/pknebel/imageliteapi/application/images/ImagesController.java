@@ -2,6 +2,8 @@ package com.github.pknebel.imageliteapi.application.images;
 
 import java.io.IOException;
 import java.net.URI;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
@@ -30,12 +32,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 @RequiredArgsConstructor
 public class ImagesController {
 
+    @Autowired
     private ImageService imageService;
 
+    @Autowired
     private ImagesMapper imagesMapper;
 
     @PostMapping
-    public ResponseEntity save(
+    public ResponseEntity<Void> save(
         @RequestParam("file") MultipartFile file,
         @RequestParam("name") String name,
         @RequestParam("tags") List<String> tags
